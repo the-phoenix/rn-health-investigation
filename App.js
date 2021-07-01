@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -26,7 +25,36 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Section = ({children, title}): Node => {
+import AppleHealthKit from 'react-native-health';
+
+/* Permission options */
+const permissions = {
+  permissions: {
+    read: [AppleHealthKit.Constants.Permissions.HeartRate],
+    write: [AppleHealthKit.Constants.Permissions.Steps],
+  },
+};
+
+AppleHealthKit.initHealthKit(permissions, error => {
+  /* Called after we receive a response from the system */
+
+  if (error) {
+    console.log('[ERROR] Cannot grant permissions!');
+  }
+
+  /* Can now read or write to HealthKit */
+
+  const options = {
+    startDate: new Date(2020, 1, 1).toISOString(),
+  };
+
+  AppleHealthKit.getHeartRateSamples(options, (callbackError, results) => {
+    console.log('heart results:', results);
+    /* Samples are now collected from HealthKit */
+  });
+});
+
+const Section = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -52,12 +80,14 @@ const Section = ({children, title}): Node => {
   );
 };
 
-const App: () => Node = () => {
+const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  console.log('HEY THERE');
 
   return (
     <SafeAreaView style={backgroundStyle}>
