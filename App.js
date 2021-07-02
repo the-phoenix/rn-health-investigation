@@ -30,8 +30,18 @@ import AppleHealthKit from 'react-native-health';
 /* Permission options */
 const permissions = {
   permissions: {
-    read: [AppleHealthKit.Constants.Permissions.HeartRate],
-    write: [AppleHealthKit.Constants.Permissions.Steps],
+    read: [
+      AppleHealthKit.Constants.Permissions.HeartRate,
+      AppleHealthKit.Constants.Permissions.RestingHeartRate,
+      AppleHealthKit.Constants.Permissions.BodyMassIndex,
+      AppleHealthKit.Constants.Permissions.Weight,
+      AppleHealthKit.Constants.Permissions.Height,
+      AppleHealthKit.Constants.Permissions.SleepAnalysis,
+      AppleHealthKit.Constants.Permissions.AppleExerciseTime,
+      AppleHealthKit.Constants.Permissions.AppleStandTime,
+      AppleHealthKit.Constants.Permissions.Workout,
+    ],
+    write: [],
   },
 };
 
@@ -48,10 +58,60 @@ AppleHealthKit.initHealthKit(permissions, error => {
     startDate: new Date(2020, 1, 1).toISOString(),
   };
 
-  AppleHealthKit.getHeartRateSamples(options, (callbackError, results) => {
-    console.log('heart results:', results);
+  AppleHealthKit.getHeartRateSamples(options, (err, results) => {
+    if (err) {
+      console.log('error from getHeartRateSamples ', err);
+      return;
+    }
     /* Samples are now collected from HealthKit */
+    console.log('getHeartRateSamples:', results);
   });
+
+  AppleHealthKit.getLatestHeight(null, (err, results) => {
+    if (err) {
+      console.log('error from getLatestHeight: ', err);
+      return;
+    }
+    console.log('getLatestHeight:', results);
+  });
+
+  AppleHealthKit.getLatestWeight(null, (err, results) => {
+    if (err) {
+      console.log('error from getLatestHeight: ', err);
+      return;
+    }
+    console.log('getLatestHeight:', results);
+  });
+
+  AppleHealthKit.getRestingHeartRateSamples(options, (err, results) => {
+    if (err) {
+      console.log('error from getRestingHeartRateSamples: ', err);
+      return;
+    }
+    console.log('getRestingHeartRateSamples:', results);
+  });
+
+  AppleHealthKit.getSleepSamples(options, (err, results) => {
+    if (err) {
+      console.log('error from getSleepSamples: ', err);
+      return;
+    }
+    console.log('getSleepSamples:', results);
+  });
+
+  AppleHealthKit.getSamples(
+    {
+      ...options,
+      type: 'Workout',
+    },
+    (err, results) => {
+      if (err) {
+        console.log('error from getSamples: ', err);
+        return;
+      }
+      console.log('getSamples for Workout:', results);
+    },
+  );
 });
 
 const Section = ({children, title}) => {
